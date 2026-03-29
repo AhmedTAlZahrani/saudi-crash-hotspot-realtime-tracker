@@ -1,7 +1,17 @@
+import logging
+import sys
+
 import numpy as np
 import pandas as pd
 from sklearn.cluster import DBSCAN
 from sklearn.metrics.pairwise import haversine_distances
+
+_handler = logging.StreamHandler(sys.stdout)
+_handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s"))
+logger = logging.getLogger("hotspot_tracker")
+logger.setLevel(logging.INFO)
+if not logger.handlers:
+    logger.addHandler(_handler)
 
 EPS_SPATIAL_KM = 5.0
 EPS_TEMPORAL_MIN = 120
@@ -63,6 +73,7 @@ class HotspotDetector:
 
         n_clusters = len(set(labels)) - (1 if -1 in labels else 0)
         n_noise = (labels == -1).sum()
+        logger.info("Spatial DBSCAN: %d clusters, %d noise points", n_clusters, n_noise)
         print(f"Spatial DBSCAN: {n_clusters} clusters, {n_noise} noise points")
 
         return result
@@ -123,6 +134,7 @@ class HotspotDetector:
         result["st_cluster_id"] = st_labels
 
         n_clusters = len(set(st_labels)) - (1 if -1 in st_labels else 0)
+        logger.info("ST-DBSCAN: %d spatio-temporal clusters", n_clusters)
         print(f"ST-DBSCAN: {n_clusters} spatio-temporal clusters")
 
         self._clusters = result
@@ -217,6 +229,7 @@ class HotspotDetector:
 
         result = pd.DataFrame(emerging).sort_values("anomaly_score", ascending=False)
         n_emerging = result["is_emerging"].sum()
+        logger.info("Emerging hotspots: %d / %d clusters", n_emerging, len(result))
         print(f"Emerging hotspots: {n_emerging} / {len(result)} clusters")
 
         return result.reset_index(drop=True)

@@ -1,5 +1,7 @@
 # Saudi Crash Hotspot Real-Time Tracker
 
+![CI](https://github.com/AhmedTAlZahrani/saudi-crash-hotspot-realtime-tracker/actions/workflows/ci.yml/badge.svg)
+
 Real-time crash hotspot detection and emergency dispatch for Saudi Arabia's highway network. The system ingests a continuous stream of crash incidents, clusters them using ST-DBSCAN (spatial + temporal), scores road segments by dynamic risk, and dispatches alerts to the nearest emergency response zone.
 
 ## Streaming Architecture
